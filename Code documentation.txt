@@ -1,0 +1,111 @@
+C#:
+
+1. Data Structures:
+
+	Signal1D: // f: R -> R
+	  Members:
+		values: A dictionary of real numbers
+	  Methods:
+        operator -(signal): Returns the negation signal  
+        operator -(signal1, signal2): Returns the difference signal
+        operator *(scalar, signal): Multiplies each number in the signal by the scalar
+        operator *(signal, scalar): Multiplies each number in the signal by the scalar
+        operator *(signal1, signal2): Returns the product signal
+        operator +(signal1, signal2): Returns the sum signal
+        Abs(): Returns the absolute value of each number in the signal
+        Avg(): Returns the average value of all numbers in the signal
+        Derivative(): Returns the derivative signal
+        Filter(predicate): Returns the filtered signal according to the predicate
+        From(time): Returns the original signal starting from parameter time until the end
+        Max(): Returns the maximum value in the signal
+        Min(): Returns the minimum value in the signal
+        To(time): Returns the original signal from the beginning until parameter time
+
+	Signal3D: // f: R -> R^3
+	  Members:
+        values: A dictionary of Value3D (a struct of 3 real numbers)
+	  Methods:
+        operator -(signal): Returns the negation signal 
+        operator -(signal1, signal2): Returns the difference signal
+        operator *(scalar, signal): Multiplies each Value3D in the signal by the scalar
+        operator *(signal, scalar): Multiplies each Value3D in the signal by the scalar
+        operator +(signal1, signal2): Returns the sum signal
+        Angle(signal): Returns a signal which contains the angle between both signals
+        CrossProduct(signal): Returns the cross product signal
+        Derivative(): Returns the derivative signal
+        DotProduct(signal): Returns the dot product signal
+        Filter(predicate): Returns the filtered signal according to the predicate
+        From(time): Returns the original signal starting from parameter time until the end
+        Length(): Returns a signal which contains the length of each Value3D
+        To(time): Returns the original signal from the beginning until parameter time
+        X(): Returns a signal which contains the 1st real number (X-coordinate)
+        XAngle(): Returns a signal which contains the angle between the original signal and the X-axis of the Kinect
+        Y(): Returns a signal which contains the 2nd real number (Y-coordinate)
+        YAngle(): Returns a signal which contains the angle between the original signal and the Y-axis of the Kinect
+        Z(): Returns a signal which contains the 3rd real number (Z-coordinate)
+        ZAngle(): Returns a signal which contains the angle between the original signal and the Z-axis of the Kinect
+		
+	Record:
+	  Members:
+		_skeletons: A dictionary of the skeleton stream frames 
+		_images: A dictionary of the RGB stream frames
+	  Methods:
+		Open(path): Opens a saved record
+        Save(path): Saves a recorded record
+		
+	SkeletonSignalGenerator:
+	  Members:
+		_skeletons: A dictionary of the skeleton stream frames
+	  Methods:
+        JointPosition(jointType): Returns a function that saves the 3D location of the joint over time (Signal3D)
+		
+2. Main Part of The Algorithms:
+
+	RecordPropertyExtractor:
+		Each feature is extracted as follows:
+		a. Creating an instance of SkeletonSignalGenerator.
+		b. Calling the method JointPosition with the desirable arguments.
+		c. Calculating the desirable signal (angle, vector, etc.).
+		d. Filtering the signal from the last step.
+		e. For continuous features: Calculating the precentage of frames which were filtered.
+		   For binary features: Checking whether the filtered signal is empty.
+		   
+Python:
+
+1. Data Structures:
+
+	FeatureSearchProblem:
+	  Members:
+		classifier: Decision Tree, KNN...
+		initial_state: Samples with all features
+	  Methods:
+		actions(state): Returns an indices list of the possible features to remove (their current index)
+		result(state, action): Returns the updated state - samples without the feature with the index 'action' 
+		value(state): Returns the cross validation result of state
+
+2. Main Part of The Algorithms:
+
+	_load_data(): 
+		Generates lists of samples and labels from the .csv files.
+	
+	_shuffle_data(samples, labels): 
+		Shuffles the samples along with their corresponding lables randomly.
+	
+	_balance_data(samples, labels): 
+		Returns the data equally distributed between the lables.
+	
+	_restore_path(path, num_of_features): 
+		Auxiliary function to restore the removed features.
+	
+	_update_histogram(histogram, dropped_features): 
+		Auxiliary function to update a histogram.
+	
+	_get_score(classifier): 
+		Returns an average cross validation result of _score_iter runs, with the given classifier.
+		This function doesn't apply the local search.
+	
+	_get_score_with_optimal_features(classifier): 
+		Returns an average cross validation result of _score_iter runs, with the given classifier.
+		Applies the local search, limited by _search_iter iterations, for each run.
+		Prints the corresponding histogram.
+	
